@@ -48,6 +48,7 @@ git clone https://github.com/MechaSpin/parakeet-qt
 - Right click the project, and select build
 
 #### 7a. Running using Visual Studio
+- Ensure that you have installed the [UART to USB Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
 - Locate your Qt bin folder
 - In the solution explorer, right click on the SimpleExample project, and select properties
 - Under the debugging tab, in the Environment section, add the following, and replace MY_PATH_TO_Qt_BIN with the path found earlier
@@ -61,6 +62,7 @@ PATH=%PATH%;MY_PATH_TO_Qt_BIN
 - Click the run button
 
 #### 7b. Running using Command Prompt
+- Ensure that you have installed the [UART to USB Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
 - Attempting to run the application without the correct Qt Dependencies in the same folder, will result in DLL missing issues
 - If building as a debug build: 
 	- Move the following DLLs into the {PARAKEET_QT_ROOT}/build/Debug folder:
