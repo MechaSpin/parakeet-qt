@@ -199,7 +199,7 @@ void MainWindow::onScanDataReceived(const std::shared_ptr<ScanDataViewModel>& da
 
     for(auto point : data->getScanData().getPoints())
     {
-        pointsInQGraphicsView.push_back(scene->addEllipse(point.getX() - dotSize, point.getY() - dotSize, dotSize, dotSize, Qt::NoPen, QBrush(Qt::blue)));
+        pointsInQGraphicsView.push_back(scene->addEllipse(point.getX_mm() - dotSize, point.getY_mm() - dotSize, dotSize, dotSize, Qt::NoPen, QBrush(Qt::blue)));
     }
 
     fpsLabel->setText(QString("FPS: ") + QString::number(driver.getScanRate_Hz()));
