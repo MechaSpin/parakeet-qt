@@ -12,8 +12,11 @@ if (WIN32)
     set(CMAKE_DEBUG_POSTFIX "d")
 endif()
 
-find_package(Parakeet REQUIRED)
 find_package(Qt5 COMPONENTS Widgets Core SerialPort REQUIRED)
+
+set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
+set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
+find_package(Parakeet REQUIRED)
 
 set(PROJECT_SOURCE
     src/main.cpp
