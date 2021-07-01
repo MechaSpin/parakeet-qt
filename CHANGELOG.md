@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3] - In-Development
 - Modified CMake to find the latest version of parakeet-sdk which can be found
+- Updated copyright action to call the action from inside the parakeet-devtools repo
 
 ## [1.0.2] - 2021-06-21
 ### Modified
