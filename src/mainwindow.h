@@ -43,7 +43,6 @@ private slots:
     void graphicsViewZoomed();
     void on_rangeSpinBox_valueChanged(int arg1);
     void on_setSettingsButton_clicked();
-
     void on_setBaudRateButton_clicked();
 
 signals:
@@ -64,9 +63,5 @@ private:
     double dotSize;
 
     std::vector<QGraphicsEllipseItem *> pointsInQGraphicsView;
-
-    static const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_TITLE;
-    static const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_PRE;
-    static const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_POST;
 };
 #endif // MAINWINDOW_H
