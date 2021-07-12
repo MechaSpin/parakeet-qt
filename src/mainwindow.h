@@ -2,8 +2,8 @@
 	Copyright 2021 OpenJAUS, LLC (dba MechaSpin). Subject to the MIT license.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef PARAKEET_QT_MAINWINDOW_H
+#define PARAKEET_QT_MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QDebug>

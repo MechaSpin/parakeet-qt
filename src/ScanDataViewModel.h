@@ -2,7 +2,8 @@
 	Copyright 2021 OpenJAUS, LLC (dba MechaSpin). Subject to the MIT license.
 */
 
-#pragma once
+#ifndef PARAKEET_QT_SCANDATAVIEWMODEL_H
+#define PARAKEET_QT_SCANDATAVIEWMODEL_H
 
 #include <parakeet/ScanDataPolar.h>
 #include <parakeet/ScanDataXY.h>
@@ -17,3 +18,5 @@ public:
 private:
     mechaspin::parakeet::ScanDataXY scanData;
 };
+
+#endif
