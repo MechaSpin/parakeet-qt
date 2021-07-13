@@ -90,7 +90,7 @@ jobs:
         working-directory: parakeet-sdk
           
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2.13.2
+        uses: MechaSpin/install-qt-action@v2.13.2
         
       - name: Configure CMake for Parakeet Qt
         run: |

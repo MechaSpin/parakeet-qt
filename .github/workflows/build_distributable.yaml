@@ -23,7 +23,7 @@ jobs:
          archive_format: zip
    steps:
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: MechaSpin/install-qt-action@v2
         with:
           dir: ${{ github.workspace }}/Qt/
           version: 5.15.2
