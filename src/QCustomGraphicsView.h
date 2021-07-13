@@ -2,7 +2,9 @@
 	Copyright 2021 OpenJAUS, LLC (dba MechaSpin). Subject to the MIT license.
 */
 
-#pragma once
+#ifndef PARAKEET_QT_QCUSTOMGRAPHICSVIEW_H
+#define PARAKEET_QT_QCUSTOMGRAPHICSVIEW_H
+
 #include <QGraphicsView>
 
 class QCustomGraphicsView : public QGraphicsView
@@ -27,3 +29,5 @@ private:
     bool doDrag;
     QPoint lastPoint;
 };
+
+#endif
