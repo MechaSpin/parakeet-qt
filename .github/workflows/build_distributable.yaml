@@ -97,7 +97,7 @@ jobs:
             Compress-Archive -Path ${{ env.RELEASE_NAME }} -DestinationPath ${{ env.RELEASE_NAME }}.${{ matrix.archive_format }}
         
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: MechaSpin/release-action@v1
         with:
           allowUpdates: true
           artifacts: parakeet-qt-*.${{ matrix.archive_format }}
