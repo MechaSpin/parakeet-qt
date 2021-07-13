@@ -6,19 +6,24 @@
 #include "./ui_mainwindow.h"
 
 #include <QDebug>
-#define AUTOMATIC_BAUD_RATE_TEXT "Auto"
 
-#define QGRAPHICSVIEW_WIDTH 50000
-#define QGRAPHICSVIEW_HEIGHT 50000
-#define QGRAPHICSVIEW_STARTING_ZOOM_MILLIMETERS 5000
-#define QGRAPHICSVIEW_POLAR_CIRCLE_DIST_MILLIMETERS 1000
+#include <parakeet/exceptions/NotConnectedToSensorException.h>
+#include <parakeet/exceptions/UnableToDetermineBaudRateException.h>
+#include <parakeet/exceptions/UnableToOpenPortException.h>
+
+#define AUTOMATIC_BAUD_RATE_TEXT "Auto"
 
 #define MM_TO_M(mm) mm * 0.001
 #define M_TO_MM(m) m * 1000
 
-const std::string MainWindow::UNOFFICIAL_BAUD_RATE_MESSAGE_TITLE = "Unofficial Baud Rate Detected";
-const std::string MainWindow::UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_PRE = "An unofficial baud rate of ";
-const std::string MainWindow::UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_POST = " was detected on the sensor. Connection will proceed, but results may not be accurate.";
+const int QGRAPHICSVIEW_WIDTH = 50000;
+const int QGRAPHICSVIEW_HEIGHT = 50000;
+const int QGRAPHICSVIEW_STARTING_ZOOM_MILLIMETERS = 5000;
+const int QGRAPHICSVIEW_POLAR_CIRCLE_DIST_MILLIMETERS = 1000;
+
+const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_TITLE = "Unofficial Baud Rate Detected";
+const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_PRE = "An unofficial baud rate of ";
+const std::string UNOFFICIAL_BAUD_RATE_MESSAGE_BODY_POST = " was detected on the sensor. Connection will proceed, but results may not be accurate.";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -118,47 +123,54 @@ void MainWindow::on_connectButton_clicked()
 
     QString portName = item.split(":").at(0);
 
-    auto baudRate = mechaspin::parakeet::BaudRate(ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex()).toInt());
+    mechaspin::parakeet::Driver::SensorConfiguration sensorConfiguration;
+    sensorConfiguration.comPort = portName.toStdString();
+    sensorConfiguration.baudRate = mechaspin::parakeet::BaudRate(ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex()).toInt());
+    sensorConfiguration.intensity = ui->intensityCheckBox->isChecked();
+    sensorConfiguration.scanningFrequency_Hz = static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt());
+    sensorConfiguration.dataSmoothing = ui->dataSmoothingCheckbox->isChecked();
+    sensorConfiguration.dragPointRemoval = ui->dragPointRemovalCheckBox->isChecked();
 
-    connectionState = driver.connect(portName.toStdString(), baudRate,
-                           ui->intensityCheckBox->isChecked(),
-                           static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt()),
-                           ui->dataSmoothingCheckbox->isChecked(),
-                           ui->dragPointRemovalCheckBox->isChecked());
-
-    enableUIFromConnectionState(connectionState);
-    if(!connectionState)
+    try
     {
+        driver.connect(sensorConfiguration);
+        connectionState = true;
+        enableUIFromConnectionState(connectionState);
+
+        driver.registerScanCallback(std::function<void(const mechaspin::parakeet::ScanDataPolar&)>
+            (
+                [&] (const mechaspin::parakeet::ScanDataPolar& scanData)
+                {
+                    std::vector<mechaspin::parakeet::PointXY> convertedList;
+
+                    for(auto point : scanData.getPoints())
+                    {
+                        convertedList.push_back(mechaspin::parakeet::util::transform(point));
+                    }
+
+                    //It's important to emit data so that it gets synced back up on the GUI thread
+                    mechaspin::parakeet::ScanDataXY scanDataXY(convertedList, scanData.getTimestamp());
+                    emit sendScanData(std::shared_ptr<ScanDataViewModel>(new ScanDataViewModel(scanDataXY)));
+                }
+            )
+            );
+
+        driver.start();
+        ui->connectButton->setText("Disconnect");
+    }
+    catch(const std::runtime_error&)
+    {
+        connectionState = false;
+        enableUIFromConnectionState(connectionState);
+
         ui->connectButton->setText("Connect");
 
         QMessageBox box;
         box.setText("Unable to connect to: " + item);
         box.exec();
-        return;
     }
 
-    driver.registerScanCallback(std::function<void(const mechaspin::parakeet::ScanDataPolar&)>
-        (
-            [&] (const mechaspin::parakeet::ScanDataPolar& scanData)
-            {
-                std::vector<mechaspin::parakeet::PointXY> convertedList;
-
-                for(auto point : scanData.getPoints())
-                {
-                    convertedList.push_back(mechaspin::parakeet::util::transform(point));
-                }
-
-                //It's important to emit data so that it gets synced back up on the GUI thread
-                mechaspin::parakeet::ScanDataXY scanDataXY(convertedList);
-                emit sendScanData(std::shared_ptr<ScanDataViewModel>(new ScanDataViewModel(scanDataXY)));
-            }
-        )
-        );
-
-    driver.start();
-    ui->connectButton->setText("Disconnect");
-
-    if(baudRate == mechaspin::parakeet::BaudRates::Auto.getValue())
+    if(sensorConfiguration.baudRate == mechaspin::parakeet::BaudRates::Auto.getValue())
     {
         bool unofficialBaudRate = true;
         mechaspin::parakeet::BaudRate connectedAtBaudRate = driver.getBaudRate();
@@ -199,7 +211,7 @@ void MainWindow::onScanDataReceived(const std::shared_ptr<ScanDataViewModel>& da
 
     for(auto point : data->getScanData().getPoints())
     {
-        pointsInQGraphicsView.push_back(scene->addEllipse(point.getX() - dotSize, point.getY() - dotSize, dotSize, dotSize, Qt::NoPen, QBrush(Qt::blue)));
+        pointsInQGraphicsView.push_back(scene->addEllipse(point.getX_mm() - dotSize, point.getY_mm() - dotSize, dotSize, dotSize, Qt::NoPen, QBrush(Qt::blue)));
     }
 
     fpsLabel->setText(QString("FPS: ") + QString::number(driver.getScanRate_Hz()));
