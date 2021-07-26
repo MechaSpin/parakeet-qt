@@ -82,18 +82,18 @@ MainWindow::~MainWindow()
 {
     if(connectionState)
     {
-        driver.stop();
-        driver.close();
+        driver->stop();
+        driver->close();
     }
     delete ui;
 }
 
-void MainWindow::on_connectButton_clicked()
+void MainWindow::on_connectButtonSerial_clicked()
 {
     if(connectionState)
     {
-        driver.stop();
-        driver.close();
+        driver->stop();
+        driver->close();
         ui->connectButton->setText("Connect");
         connectionState = false;
         enableUIFromConnectionState(connectionState);
@@ -123,7 +123,7 @@ void MainWindow::on_connectButton_clicked()
 
     QString portName = item.split(":").at(0);
 
-    mechaspin::parakeet::Driver::SensorConfiguration sensorConfiguration;
+    mechaspin::parakeet::Pro::Driver::SensorConfiguration sensorConfiguration;
     sensorConfiguration.comPort = portName.toStdString();
     sensorConfiguration.baudRate = mechaspin::parakeet::BaudRate(ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex()).toInt());
     sensorConfiguration.intensity = ui->intensityCheckBox->isChecked();
@@ -131,13 +131,16 @@ void MainWindow::on_connectButton_clicked()
     sensorConfiguration.dataSmoothing = ui->dataSmoothingCheckbox->isChecked();
     sensorConfiguration.dragPointRemoval = ui->dragPointRemovalCheckBox->isChecked();
 
+    mechaspin::parakeet::Pro::Driver* proDriver = new mechaspin::parakeet::Pro::Driver();
+    driver = proDriver;
+
     try
     {
-        driver.connect(sensorConfiguration);
+        proDriver->connect(sensorConfiguration);
         connectionState = true;
         enableUIFromConnectionState(connectionState);
 
-        driver.registerScanCallback(std::function<void(const mechaspin::parakeet::ScanDataPolar&)>
+        driver->registerScanCallback(std::function<void(const mechaspin::parakeet::ScanDataPolar&)>
             (
                 [&] (const mechaspin::parakeet::ScanDataPolar& scanData)
                 {
@@ -155,7 +158,7 @@ void MainWindow::on_connectButton_clicked()
             )
             );
 
-        driver.start();
+        driver->start();
         ui->connectButton->setText("Disconnect");
     }
     catch(const std::runtime_error&)
@@ -173,7 +176,7 @@ void MainWindow::on_connectButton_clicked()
     if(sensorConfiguration.baudRate == mechaspin::parakeet::BaudRates::Auto.getValue())
     {
         bool unofficialBaudRate = true;
-        mechaspin::parakeet::BaudRate connectedAtBaudRate = driver.getBaudRate();
+        mechaspin::parakeet::BaudRate connectedAtBaudRate = proDriver->getBaudRate();
 
         for(int i = 0; i < ui->baudRateComboBox->count(); i++)
         {
@@ -214,7 +217,7 @@ void MainWindow::onScanDataReceived(const std::shared_ptr<ScanDataViewModel>& da
         pointsInQGraphicsView.push_back(scene->addEllipse(point.getX_mm() - dotSize, point.getY_mm() - dotSize, dotSize, dotSize, Qt::NoPen, QBrush(Qt::blue)));
     }
 
-    fpsLabel->setText(QString("FPS: ") + QString::number(driver.getScanRate_Hz()));
+    fpsLabel->setText(QString("FPS: ") + QString::number(driver->getScanRate_Hz()));
 }
 
 void MainWindow::graphicsViewZoomed()
@@ -255,25 +258,106 @@ void MainWindow::on_rangeSpinBox_valueChanged(int arg1)
 
 void MainWindow::on_setSettingsButton_clicked()
 {
+    mechaspin::parakeet::ProE::Driver* proEDriver = dynamic_cast<mechaspin::parakeet::ProE::Driver*>(driver);
+
     //Flush all the settings (excluding baud rate) to the sensor
 
     //Intensity Data
-    driver.enableIntensityData(ui->intensityCheckBox->checkState());
+    driver->enableIntensityData(ui->intensityCheckBox->checkState());
 
     //Drag Point Removal
-    driver.enableRemoveDragPoint(ui->dragPointRemovalCheckBox->checkState());
+    driver->enableRemoveDragPoint(ui->dragPointRemovalCheckBox->checkState());
 
     //Data Smoothing
-    driver.enableDataSmoothing(ui->dataSmoothingCheckbox->checkState());
+    driver->enableDataSmoothing(ui->dataSmoothingCheckbox->checkState());
+
+    //Resample Filter
+    if(proEDriver)
+    {
+        proEDriver->enableResampleFilter(ui->resampleFilterCheckbox->checkState());
+    }
 
     //Scanning Frequency
     auto frequency = static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt());
-    driver.setScanningFrequency_Hz(frequency);
+    driver->setScanningFrequency_Hz(frequency);
 }
 
 void MainWindow::on_setBaudRateButton_clicked()
 {
     //Baud Rate
     auto baudRate = mechaspin::parakeet::BaudRate(ui->setBaudRateComboBox->itemData(ui->setBaudRateComboBox->currentIndex()).toInt());
-    driver.setBaudRate(baudRate);
+
+    mechaspin::parakeet::Pro::Driver* proDriver = dynamic_cast<mechaspin::parakeet::Pro::Driver*>(driver);
+    if(proDriver)
+    {
+        proDriver->setBaudRate(baudRate);
+    }
+}
+
+void MainWindow::on_connectButtonEthernet_clicked()
+{
+    if(connectionState)
+    {
+        driver->stop();
+        driver->close();
+        ui->connectButtonEthernet->setText("Connect");
+        connectionState = false;
+        enableUIFromConnectionState(connectionState);
+        return;
+    }
+
+    ui->connectButtonEthernet->setText("Connecting...");
+    QApplication::processEvents();
+
+    mechaspin::parakeet::ProE::Driver::SensorConfiguration sensorConfiguration;
+    sensorConfiguration.ipAddress = "192.168.158.98";
+    sensorConfiguration.localPort = 6668;
+    sensorConfiguration.lidarPort = 6543;
+    sensorConfiguration.intensity = ui->intensityCheckBox->isChecked();
+    sensorConfiguration.scanningFrequency_Hz = static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt());
+    sensorConfiguration.dataSmoothing = ui->dataSmoothingCheckbox->isChecked();
+    sensorConfiguration.dragPointRemoval = ui->dragPointRemovalCheckBox->isChecked();
+    sensorConfiguration.resampleFilter = true;
+
+    mechaspin::parakeet::ProE::Driver* proEDriver = new mechaspin::parakeet::ProE::Driver();
+    driver = proEDriver;
+
+    try
+    {
+        proEDriver->connect(sensorConfiguration);
+        connectionState = true;
+        enableUIFromConnectionState(connectionState);
+
+        driver->registerScanCallback(std::function<void(const mechaspin::parakeet::ScanDataPolar&)>
+            (
+                [&] (const mechaspin::parakeet::ScanDataPolar& scanData)
+                {
+                    std::vector<mechaspin::parakeet::PointXY> convertedList;
+
+                    for(auto point : scanData.getPoints())
+                    {
+                        convertedList.push_back(mechaspin::parakeet::util::transform(point));
+                    }
+
+                    //It's important to emit data so that it gets synced back up on the GUI thread
+                    mechaspin::parakeet::ScanDataXY scanDataXY(convertedList, scanData.getTimestamp());
+                    emit sendScanData(std::shared_ptr<ScanDataViewModel>(new ScanDataViewModel(scanDataXY)));
+                }
+            )
+            );
+
+        driver->start();
+        ui->connectButtonEthernet->setText("Disconnect");
+    }
+    catch(const std::runtime_error&)
+    {
+        connectionState = false;
+        enableUIFromConnectionState(connectionState);
+
+        ui->connectButtonEthernet->setText("Connect");
+
+        QMessageBox box;
+        box.setText(QString::fromStdString(std::string("Unable to connect to: ") + sensorConfiguration.ipAddress + ":" + std::to_string(sensorConfiguration.lidarPort)));
+        box.exec();
+    }
 }

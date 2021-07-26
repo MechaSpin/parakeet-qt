@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
+    <width>1121</width>
     <height>709</height>
    </rect>
   </property>
@@ -20,7 +20,7 @@
       <x>10</x>
       <y>0</y>
       <width>943</width>
-      <height>101</height>
+      <height>110</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="mainLayout">
@@ -167,6 +167,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="resampleFilterCheckbox">
+         <property name="text">
+          <string>Resample Filter</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -261,13 +268,26 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="connectButtonEthernet">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>230</y>
+      <width>159</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>949</width>
+     <width>1121</width>
      <height>20</height>
     </rect>
    </property>
