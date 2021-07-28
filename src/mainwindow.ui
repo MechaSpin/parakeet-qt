@@ -172,6 +172,9 @@
          <property name="text">
           <string>Resample Filter</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -288,7 +291,7 @@
      <x>0</x>
      <y>0</y>
      <width>1121</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

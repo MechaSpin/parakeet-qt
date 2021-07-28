@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
         auto frequency = allFrequencies[i];
         ui->scanningFrequencyComboBox->addItem(QString::number(frequency), QVariant::fromValue(static_cast<int>(frequency)));
 
-        if(frequency == mechaspin::parakeet::Driver::ScanningFrequency::Frequency_10Hz)
+        if(frequency == mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz)
         {
             ui->scanningFrequencyComboBox->setCurrentIndex(i);
         }
