@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>943</width>
-      <height>110</height>
+      <width>1054</width>
+      <height>114</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="mainLayout">
@@ -36,28 +36,11 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QComboBox" name="sensorSelectionComboBox">
+         <property name="currentText">
+          <string/>
          </property>
-         <item>
-          <widget class="QLabel" name="baudrateLabel">
-           <property name="text">
-            <string>Baud Rate: </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="baudRateComboBox">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="connectButton">
@@ -269,19 +252,6 @@
       <width>931</width>
       <height>551</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="connectButtonEthernet">
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>230</y>
-      <width>159</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Connect</string>
     </property>
    </widget>
   </widget>
