@@ -27,6 +27,9 @@ set(PROJECT_SOURCE
     src/ScanDataViewModel.cpp
     src/QCustomGraphicsView.h
     src/QCustomGraphicsView.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.h
+    src/UI/Dialogs/ProEConfigurationDialog.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.ui
 )
 
 add_executable(parakeet-viewer ${PROJECT_SOURCE})

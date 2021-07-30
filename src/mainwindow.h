@@ -39,8 +39,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_connectButtonSerial_clicked();
-    void on_connectButtonEthernet_clicked();
+    void on_connectButton_clicked();
     void onScanDataReceived(const std::shared_ptr<ScanDataViewModel>& data);
     void graphicsViewZoomed();
     void on_rangeSpinBox_valueChanged(int arg1);
@@ -50,7 +49,13 @@ signals:
     void sendScanData(const std::shared_ptr<ScanDataViewModel>& data);
 
 private:
+    bool connectViaEthernet();
+    bool connectViaSerial();
+
     void drawPolarGrid(double metersPerCircle);
+
+    void enableUIForPro();
+    void enableUIForProE();
     void enableUIFromConnectionState(bool state);
 
     QGraphicsScene *scene;
