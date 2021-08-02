@@ -31,6 +31,19 @@ const QString PARAKEET_PRO_SENSOR_TITLE = "Parakeet Pro";
 const QString PARAKEET_PROE_SENSOR_TITLE = "Parakeet ProE";
 const QString FAILURE_TO_CONNECT_TO_SENSOR = "Unable to connect to sensor. Make sure the correct configuration is being used.";
 
+const std::vector<mechaspin::parakeet::Driver::ScanningFrequency> PARAKEET_PRO_SUPPORTED_FREQUENCIES =
+{
+    mechaspin::parakeet::Driver::ScanningFrequency::Frequency_7Hz,
+    mechaspin::parakeet::Driver::ScanningFrequency::Frequency_10Hz,
+    mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz
+};
+
+const std::vector<mechaspin::parakeet::Driver::ScanningFrequency> PARAKEET_PROE_SUPPORTED_FREQUENCIES =
+{
+    mechaspin::parakeet::Driver::ScanningFrequency::Frequency_10Hz,
+    mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz
+};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -44,24 +57,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->setBaudRateComboBox->addItem(QString::fromStdString(mechaspin::parakeet::BaudRates::br768000.toString()), mechaspin::parakeet::BaudRates::br768000.getValue());
-
-    std::vector<mechaspin::parakeet::Driver::ScanningFrequency> allFrequencies =
-    {
-        mechaspin::parakeet::Driver::ScanningFrequency::Frequency_7Hz,
-        mechaspin::parakeet::Driver::ScanningFrequency::Frequency_10Hz,
-        mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz
-    };
-
-    for(int i = 0; i < allFrequencies.size(); i++)
-    {
-        auto frequency = allFrequencies[i];
-        ui->scanningFrequencyComboBox->addItem(QString::number(frequency), QVariant::fromValue(static_cast<int>(frequency)));
-
-        if(frequency == mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz)
-        {
-            ui->scanningFrequencyComboBox->setCurrentIndex(i);
-        }
-    }
 
     ui->sensorSelectionComboBox->addItem(PARAKEET_PROE_SENSOR_TITLE);
     ui->sensorSelectionComboBox->addItem(PARAKEET_PRO_SENSOR_TITLE);
@@ -102,8 +97,8 @@ bool MainWindow::connectViaEthernet()
     {
         mechaspin::parakeet::ProE::Driver::SensorConfiguration sensorConfiguration;
         sensorConfiguration.ipAddress = proEConfigurationDialog.getIP().toStdString();
-        sensorConfiguration.localPort = proEConfigurationDialog.getLocalPort().toInt();
-        sensorConfiguration.lidarPort = proEConfigurationDialog.getLidarPort().toInt();
+        sensorConfiguration.srcPort = proEConfigurationDialog.getSrcPort().toInt();
+        sensorConfiguration.dstPort = proEConfigurationDialog.getDstPort().toInt();
         sensorConfiguration.intensity = ui->intensityCheckBox->isChecked();
         sensorConfiguration.scanningFrequency_Hz = static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt());
         sensorConfiguration.dataSmoothing = ui->dataSmoothingCheckbox->isChecked();
@@ -258,6 +253,8 @@ void MainWindow::enableUIForPro()
     ui->resampleFilterCheckbox->setEnabled(false);
     ui->setBaudRateComboBox->setEnabled(true);
     ui->setBaudRateButton->setEnabled(true);
+
+    populateFrequencyList(PARAKEET_PRO_SUPPORTED_FREQUENCIES);
 }
 
 void MainWindow::enableUIForProE()
@@ -265,6 +262,24 @@ void MainWindow::enableUIForProE()
     ui->resampleFilterCheckbox->setEnabled(true);
     ui->setBaudRateComboBox->setEnabled(false);
     ui->setBaudRateButton->setEnabled(false);
+
+    populateFrequencyList(PARAKEET_PROE_SUPPORTED_FREQUENCIES);
+}
+
+void MainWindow::populateFrequencyList(const std::vector<mechaspin::parakeet::Driver::ScanningFrequency>& frequencies)
+{
+    ui->scanningFrequencyComboBox->clear();
+
+    for(int i = 0; i < frequencies.size(); i++)
+    {
+        auto frequency = frequencies[i];
+        ui->scanningFrequencyComboBox->addItem(QString::number(frequency), QVariant::fromValue(static_cast<int>(frequency)));
+
+        if(frequency == mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz)
+        {
+            ui->scanningFrequencyComboBox->setCurrentIndex(i);
+        }
+    }
 }
 
 void MainWindow::onScanDataReceived(const std::shared_ptr<ScanDataViewModel>& data)
