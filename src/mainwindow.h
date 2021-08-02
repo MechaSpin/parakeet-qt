@@ -58,6 +58,8 @@ private:
     void enableUIForProE();
     void enableUIFromConnectionState(bool state);
 
+    void populateFrequencyList(const std::vector<mechaspin::parakeet::Driver::ScanningFrequency>& frequencies);
+
     QGraphicsScene *scene;
     QLabel* fpsLabel;
     Ui::MainWindow *ui;

@@ -34,33 +34,33 @@
     <rect>
      <x>10</x>
      <y>13</y>
-     <width>61</width>
+     <width>121</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>IP Address:</string>
+    <string>Destination IP Address:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="localPortLabel">
+  <widget class="QLabel" name="srcPortLabel">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>73</y>
-     <width>61</width>
+     <width>131</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Local Port :</string>
+    <string>Source Port:</string>
    </property>
   </widget>
   <widget class="QPlainTextEdit" name="ipAddressTextbox">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>140</x>
      <y>10</y>
-     <width>201</width>
+     <width>141</width>
      <height>21</height>
     </rect>
    </property>
@@ -86,15 +86,15 @@
     <enum>QPlainTextEdit::NoWrap</enum>
    </property>
    <property name="placeholderText">
-    <string>192.168.1.98</string>
+    <string>192.168.158.98</string>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="localPortTextbox">
+  <widget class="QPlainTextEdit" name="srcPortTextbox">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>140</x>
      <y>70</y>
-     <width>201</width>
+     <width>141</width>
      <height>21</height>
     </rect>
    </property>
@@ -123,12 +123,12 @@
     <string>6668</string>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="lidarPortTextbox">
+  <widget class="QPlainTextEdit" name="dstPortTextbox">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>140</x>
      <y>40</y>
-     <width>201</width>
+     <width>141</width>
      <height>21</height>
     </rect>
    </property>
@@ -157,17 +157,17 @@
     <string>6543</string>
    </property>
   </widget>
-  <widget class="QLabel" name="lidarPortLabel">
+  <widget class="QLabel" name="dstPortLabel">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>43</y>
-     <width>61</width>
+     <width>131</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Lidar Port:</string>
+    <string>Destination Port:</string>
    </property>
   </widget>
  </widget>

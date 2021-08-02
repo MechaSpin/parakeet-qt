@@ -6,8 +6,8 @@
 #include "ui_ProEConfigurationDialog.h"
 
 const QString SETTING_LAST_USED_IP_ADDRESS = "LastUsedIP";
-const QString SETTING_LAST_USED_LIDAR_PORT = "LastUsedLidarPort";
-const QString SETTING_LAST_USED_LOCAL_PORT = "LastUsedLocalPort";
+const QString SETTING_LAST_USED_SRC_PORT = "LastUsedSrcPort";
+const QString SETTING_LAST_USED_DST_PORT = "LastUsedDstPort";
 
 QString ProEConfigurationDialog::ipaddressAcceptedCharacters = ".locahst";
 
@@ -21,21 +21,21 @@ ProEConfigurationDialog::ProEConfigurationDialog(QWidget *parent) :
     {
         ui->ipAddressTextbox->insertPlainText(settings.value(SETTING_LAST_USED_IP_ADDRESS).toString());
     }
-    if(settings.contains(SETTING_LAST_USED_LIDAR_PORT))
+    if(settings.contains(SETTING_LAST_USED_DST_PORT))
     {
-        ui->lidarPortTextbox->insertPlainText(settings.value(SETTING_LAST_USED_LIDAR_PORT).toString());
+        ui->dstPortTextbox->insertPlainText(settings.value(SETTING_LAST_USED_DST_PORT).toString());
     }
-    if(settings.contains(SETTING_LAST_USED_LOCAL_PORT))
+    if(settings.contains(SETTING_LAST_USED_SRC_PORT))
     {
-        ui->localPortTextbox->insertPlainText(settings.value(SETTING_LAST_USED_LOCAL_PORT).toString());
+        ui->srcPortTextbox->insertPlainText(settings.value(SETTING_LAST_USED_SRC_PORT).toString());
     }
 }
 
 ProEConfigurationDialog::~ProEConfigurationDialog()
 {
     settings.setValue(SETTING_LAST_USED_IP_ADDRESS, getIP());
-    settings.setValue(SETTING_LAST_USED_LIDAR_PORT, getLidarPort());
-    settings.setValue(SETTING_LAST_USED_LOCAL_PORT, getLocalPort());
+    settings.setValue(SETTING_LAST_USED_DST_PORT, getDstPort());
+    settings.setValue(SETTING_LAST_USED_SRC_PORT, getSrcPort());
     delete ui;
 }
 
@@ -51,25 +51,25 @@ QString ProEConfigurationDialog::getIP()
     return plainText;
 }
 
-QString ProEConfigurationDialog::getLidarPort()
+QString ProEConfigurationDialog::getDstPort()
 {
-    QString plainText = ui->lidarPortTextbox->toPlainText();
+    QString plainText = ui->dstPortTextbox->toPlainText();
 
     if(plainText == "")
     {
-        return ui->lidarPortTextbox->placeholderText();
+        return ui->dstPortTextbox->placeholderText();
     }
 
     return plainText;
 }
 
-QString ProEConfigurationDialog::getLocalPort()
+QString ProEConfigurationDialog::getSrcPort()
 {
-    QString plainText = ui->localPortTextbox->toPlainText();
+    QString plainText = ui->srcPortTextbox->toPlainText();
 
     if(plainText == "")
     {
-        return ui->localPortTextbox->placeholderText();
+        return ui->srcPortTextbox->placeholderText();
     }
 
     return plainText;
@@ -158,14 +158,14 @@ void ProEConfigurationDialog::on_ipAddressTextbox_textChanged()
     checkTextboxCharacterRequirements(ui->ipAddressTextbox, MAX_IPADDRESS_LENGTH, &ProEConfigurationDialog::isAllowedIPAddressCharacter);
 }
 
-void ProEConfigurationDialog::on_lidarPortTextbox_textChanged()
+void ProEConfigurationDialog::on_dstPortTextbox_textChanged()
 {
-    checkTextboxCharacterRequirements(ui->lidarPortTextbox, MAX_PORT_LENGTH, &ProEConfigurationDialog::isAllowedPortCharacter);
+    checkTextboxCharacterRequirements(ui->dstPortTextbox, MAX_PORT_LENGTH, &ProEConfigurationDialog::isAllowedPortCharacter);
 }
 
-void ProEConfigurationDialog::on_localPortTextbox_textChanged()
+void ProEConfigurationDialog::on_srcPortTextbox_textChanged()
 {
-    checkTextboxCharacterRequirements(ui->localPortTextbox, MAX_PORT_LENGTH, &ProEConfigurationDialog::isAllowedPortCharacter);
+    checkTextboxCharacterRequirements(ui->srcPortTextbox, MAX_PORT_LENGTH, &ProEConfigurationDialog::isAllowedPortCharacter);
 }
 
 void ProEConfigurationDialog::on_buttonBox_accepted()

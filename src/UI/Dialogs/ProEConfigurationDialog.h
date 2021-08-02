@@ -22,14 +22,14 @@ public:
     ~ProEConfigurationDialog();
 
     QString getIP();
-    QString getLidarPort();
-    QString getLocalPort();
+    QString getDstPort();
+    QString getSrcPort();
 
 private slots:
     void on_ipAddressTextbox_textChanged();
 
-    void on_lidarPortTextbox_textChanged();
-    void on_localPortTextbox_textChanged();
+    void on_dstPortTextbox_textChanged();
+    void on_srcPortTextbox_textChanged();
 
     void on_buttonBox_accepted();
 
