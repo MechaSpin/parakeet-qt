@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
-project(parakeet-qt VERSION 1.0.3 LANGUAGES CXX)
+project(parakeet-qt VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -27,6 +27,9 @@ set(PROJECT_SOURCE
     src/ScanDataViewModel.cpp
     src/QCustomGraphicsView.h
     src/QCustomGraphicsView.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.h
+    src/UI/Dialogs/ProEConfigurationDialog.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.ui
 )
 
 add_executable(parakeet-viewer ${PROJECT_SOURCE})

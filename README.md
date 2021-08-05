@@ -8,4 +8,4 @@ Documentation for building and running the Qt application can be found [here](do
 
 ## Windows Requirements
 
-The CP210x USB to UART Bridge connector needs a specific driver installed to be used on Windows. You can find the latest driver [here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
+The Parakeet-Pro sensor comes with a CP210x USB to UART Bridge connector which needs a specific driver installed to be used on Windows. You can find the latest driver [here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
