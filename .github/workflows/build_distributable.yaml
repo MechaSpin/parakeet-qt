@@ -2,7 +2,7 @@ name: Build-Distributable
 
 on:
   push:
-    branches: [ main ]
+    branches: [ make_qt_binaries ]
 
 env:
   BUILD_TYPE: Release
@@ -33,6 +33,7 @@ jobs:
         with:
           repository: ${{ env.PARAKEET_SDK_REPO }}
           path: 'parakeet-sdk'
+          ref: 'dev'
           token: ${{ env.PERSONAL_ACCESS_TOKEN || github.token }}
 
       - name: Configure CMake for Parakeet SDK
@@ -48,6 +49,7 @@ jobs:
         with:
           repository: ${{ env.PARAKEET_QT_REPO }}
           path: 'parakeet-qt'
+          ref: 'make_qt_binaries'
           token: ${{ env.PERSONAL_ACCESS_TOKEN || github.token }}
 
       - name: Configure CMake for Parakeet Qt
