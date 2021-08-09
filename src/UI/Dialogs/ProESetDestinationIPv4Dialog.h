@@ -10,31 +10,31 @@
 #include <QSettings>
 
 namespace Ui {
-class ProEConfigurationDialog;
+class ProESetDestinationIPv4Dialog;
 }
 
-class ProEConfigurationDialog : public QDialog
+class ProESetDestinationIPv4Dialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ProEConfigurationDialog(QWidget *parent = nullptr);
-    ~ProEConfigurationDialog();
+    explicit ProESetDestinationIPv4Dialog(QWidget *parent = nullptr);
+    ~ProESetDestinationIPv4Dialog();
 
     QString getIP();
     QString getDstPort();
-    QString getSrcPort();
 
 private slots:
     void on_ipAddressTextbox_textChanged();
-
     void on_dstPortTextbox_textChanged();
-    void on_srcPortTextbox_textChanged();
-
     void on_buttonBox_accepted();
 
 private:
-    Ui::ProEConfigurationDialog *ui;
+    Ui::ProESetDestinationIPv4Dialog *ui;
+
+    static QString ipaddressAcceptedCharacters;
+    static const int MAX_IPADDRESS_LENGTH = 15;
+    static const int MAX_PORT_LENGTH = 5;
 
     QSettings settings;
 };

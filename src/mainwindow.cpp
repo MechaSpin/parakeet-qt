@@ -11,7 +11,13 @@
 #include <parakeet/exceptions/UnableToDetermineBaudRateException.h>
 #include <parakeet/exceptions/UnableToOpenPortException.h>
 
+#include <parakeet/util.h>
+
 #include "UI/Dialogs/ProEConfigurationDialog.h"
+#include "UI/Dialogs/ProESetDestinationIPv4Dialog.h"
+#include "UI/Dialogs/ProESetSourceIPv4Dialog.h"
+
+#include "IPv4Validator.h"
 
 #define AUTOMATIC_BAUD_RATE_TEXT "Auto"
 
@@ -100,7 +106,7 @@ bool MainWindow::connectViaEthernet()
         sensorConfiguration.srcPort = proEConfigurationDialog.getSrcPort().toInt();
         sensorConfiguration.dstPort = proEConfigurationDialog.getDstPort().toInt();
         sensorConfiguration.intensity = ui->intensityCheckBox->isChecked();
-        sensorConfiguration.scanningFrequency_Hz = static_cast<mechaspin::parakeet::Driver::ScanningFrequency>(ui->scanningFrequencyComboBox->currentData().toInt());
+        sensorConfiguration.scanningFrequency_Hz = mechaspin::parakeet::Driver::ScanningFrequency::Frequency_15Hz;
         sensorConfiguration.dataSmoothing = ui->dataSmoothingCheckbox->isChecked();
         sensorConfiguration.dragPointRemoval = ui->dragPointRemovalCheckBox->isChecked();
         sensorConfiguration.resampleFilter = true;
@@ -239,12 +245,13 @@ void MainWindow::on_connectButton_clicked()
         QMessageBox box;
         box.setText(FAILURE_TO_CONNECT_TO_SENSOR);
         box.exec();
+
+        driver->close();
     }
 }
 
 void MainWindow::enableUIFromConnectionState(bool state)
 {
-    ui->setBaudRateButton->setEnabled(state);
     ui->setSettingsButton->setEnabled(state);
 }
 
@@ -253,6 +260,8 @@ void MainWindow::enableUIForPro()
     ui->resampleFilterCheckbox->setEnabled(false);
     ui->setBaudRateComboBox->setEnabled(true);
     ui->setBaudRateButton->setEnabled(true);
+    ui->setSourceSettings->setEnabled(false);
+    ui->setDestinationSettings->setEnabled(false);
 
     populateFrequencyList(PARAKEET_PRO_SUPPORTED_FREQUENCIES);
 }
@@ -262,6 +271,8 @@ void MainWindow::enableUIForProE()
     ui->resampleFilterCheckbox->setEnabled(true);
     ui->setBaudRateComboBox->setEnabled(false);
     ui->setBaudRateButton->setEnabled(false);
+    ui->setSourceSettings->setEnabled(true);
+    ui->setDestinationSettings->setEnabled(true);
 
     populateFrequencyList(PARAKEET_PROE_SUPPORTED_FREQUENCIES);
 }
@@ -370,5 +381,44 @@ void MainWindow::on_setBaudRateButton_clicked()
     if(proDriver)
     {
         proDriver->setBaudRate(baudRate);
+    }
+}
+
+void MainWindow::on_setDestinationSettings_clicked()
+{
+    ProESetDestinationIPv4Dialog dialog;
+
+    if(dialog.exec())
+    {
+        mechaspin::parakeet::ProE::Driver* proEDriver = dynamic_cast<mechaspin::parakeet::ProE::Driver*>(driver);
+        if(proEDriver)
+        {
+            auto ipAddress = mechaspin::parakeet::util::addressToByteArray(dialog.getIP().toStdString());
+            auto port = dialog.getDstPort().toUShort();
+            proEDriver->setSensorDestinationIPv4Settings(ipAddress.data(),
+                                                         port);
+        }
+    }
+}
+
+void MainWindow::on_setSourceSettings_clicked()
+{
+    ProESetSourceIPv4Dialog dialog;
+
+    if(dialog.exec())
+    {
+        mechaspin::parakeet::ProE::Driver* proEDriver = dynamic_cast<mechaspin::parakeet::ProE::Driver*>(driver);
+        if(proEDriver)
+        {
+            auto ipAddress = mechaspin::parakeet::util::addressToByteArray(dialog.getIP().toStdString());
+            auto subnetMask = mechaspin::parakeet::util::addressToByteArray(dialog.getSubnetMask().toStdString());
+            auto defaultGateway = mechaspin::parakeet::util::addressToByteArray(dialog.getDefaultGateway().toStdString());
+            auto port = dialog.getPort().toUShort();
+
+            proEDriver->setSensorIPv4Settings(ipAddress.data(),
+                                                    subnetMask.data(),
+                                                    defaultGateway.data(),
+                                                    port);
+        }
     }
 }

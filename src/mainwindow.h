@@ -45,6 +45,10 @@ private slots:
     void on_rangeSpinBox_valueChanged(int arg1);
     void on_setSettingsButton_clicked();
     void on_setBaudRateButton_clicked();
+    void on_setDestinationSettings_clicked();
+
+    void on_setSourceSettings_clicked();
+
 signals:
     void sendScanData(const std::shared_ptr<ScanDataViewModel>& data);
 
