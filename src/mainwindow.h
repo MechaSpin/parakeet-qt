@@ -18,7 +18,8 @@
 #include <QFont>
 #include <QtGlobal>
 
-#include <parakeet/Driver.h>
+#include <parakeet/ProE/Driver.h>
+#include <parakeet/Pro/Driver.h>
 #include <parakeet/util.h>
 
 #include "ScanDataViewModel.h"
@@ -44,18 +45,29 @@ private slots:
     void on_rangeSpinBox_valueChanged(int arg1);
     void on_setSettingsButton_clicked();
     void on_setBaudRateButton_clicked();
+    void on_setDestinationSettings_clicked();
+
+    void on_setSourceSettings_clicked();
 
 signals:
     void sendScanData(const std::shared_ptr<ScanDataViewModel>& data);
 
 private:
+    bool connectViaEthernet();
+    bool connectViaSerial();
+
     void drawPolarGrid(double metersPerCircle);
+
+    void enableUIForPro();
+    void enableUIForProE();
     void enableUIFromConnectionState(bool state);
+
+    void populateFrequencyList(const std::vector<mechaspin::parakeet::Driver::ScanningFrequency>& frequencies);
 
     QGraphicsScene *scene;
     QLabel* fpsLabel;
     Ui::MainWindow *ui;
-    mechaspin::parakeet::Driver driver;
+    mechaspin::parakeet::Driver* driver;
 
     bool connectionState;
 

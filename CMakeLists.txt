@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
-project(parakeet-qt VERSION 1.0.3 LANGUAGES CXX)
+project(parakeet-qt VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -19,6 +19,8 @@ set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 find_package(Parakeet REQUIRED)
 
 set(PROJECT_SOURCE
+    src/IPv4Validator.h
+    src/IPv4Validator.cpp
     src/main.cpp
     src/mainwindow.cpp
     src/mainwindow.h
@@ -27,6 +29,15 @@ set(PROJECT_SOURCE
     src/ScanDataViewModel.cpp
     src/QCustomGraphicsView.h
     src/QCustomGraphicsView.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.h
+    src/UI/Dialogs/ProEConfigurationDialog.cpp
+    src/UI/Dialogs/ProEConfigurationDialog.ui
+    src/UI/Dialogs/ProESetSourceIPv4Dialog.h
+    src/UI/Dialogs/ProESetSourceIPv4Dialog.cpp
+    src/UI/Dialogs/ProESetSourceIPv4Dialog.ui
+    src/UI/Dialogs/ProESetDestinationIPv4Dialog.h
+    src/UI/Dialogs/ProESetDestinationIPv4Dialog.cpp
+    src/UI/Dialogs/ProESetDestinationIPv4Dialog.ui
 )
 
 add_executable(parakeet-viewer ${PROJECT_SOURCE})
